@@ -1,41 +1,79 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { nanoid } from 'nanoid';
-import persistReducer from 'redux-persist/es/persistReducer';
-import storage from 'redux-persist/lib/storage';
+// import { nanoid } from 'nanoid';
+import { addContact, deleteContact, fetchContacts } from './operations';
+import Notiflix from 'notiflix';
 
 const contactsSlice = createSlice({
   name: 'contacts',
-  initialState: { contacts: [] },
-  reducers: {
-    addContact: {
-      reducer(state, { payload }) {
-        state.contacts.push(payload);
-      },
-      prepare(name, number) {
-        return {
-          payload: {
-            id: nanoid(),
-            name,
-            number,
-          },
-        };
-      },
-    },
-    deleteContact(state, { payload }) {
-      state.contacts = state.contacts.filter(({ id }) => id !== payload);
-    },
+  initialState: {
+    items: [],
+    isLoading: false,
+    error: null,
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(fetchContacts.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(fetchContacts.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.error = null;
+        state.items = payload;
+      })
+      .addCase(fetchContacts.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.error = payload;
+        Notiflix.Notify.failure(payload);
+      })
+
+      .addCase(addContact.pending, state => {
+        state.isLoading = true;
+      } )
+      .addCase(addContact.fulfilled, (state, {payload})=>{
+        state.isLoading= false;
+        state.error =null;
+        state.items.push(payload)
+      })
+      .addCase(addContact.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.error = payload;
+        Notiflix.Notify.failure(payload);
+      })
+
+      .addCase(deleteContact.pending, state => {
+        state.isLoading = true;
+      } )
+      .addCase(deleteContact.fulfilled, (state, {payload})=>{
+        state.isLoading= false;
+        state.error = null;
+        state.items = state.items.filter(({id})=>id !==payload.id);
+      })
+      .addCase(deleteContact.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.error = payload;
+        Notiflix.Notify.failure(payload);
+      })
+
+    // addContact: {
+    //   reducer(state, { payload }) {
+    //     state.items.push(payload);
+    //   },
+    //   prepare(name, number) {
+    //     return {
+    //       payload: {
+    //         id: nanoid(),
+    //         name,
+    //         number,
+    //       },
+    //     };
+    //   },
+    // },
+    // deleteContact(state, { payload }) {
+    //   state.contacts = state.items.filter(({ id }) => id !== payload);
+    // },
   },
 });
 
-export const { addContact, deleteContact } = contactsSlice.actions;
+// export const { addContact, deleteContact } = contactsSlice.actions;
 
-const persistConfig = {
-  key: 'contacts',
-  storage,
-  // whitelist: ['contacts'],
-};
-
-export const contactsReducer = persistReducer(
-  persistConfig,
-  contactsSlice.reducer
-);
+export const contactsReducer = contactsSlice.reducer;

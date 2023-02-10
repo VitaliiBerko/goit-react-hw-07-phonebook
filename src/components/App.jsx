@@ -1,18 +1,29 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 // import { nanoid } from 'nanoid';
 
 import { ContactForm } from './ContactForm/ContactForm';
 import { ContactList } from './ContactList/ContactList';
 import { Filter } from './Filter/Filter';
 import s from './app.module.css';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchContacts } from 'redux/operations';
+import { selectContacts, selectError, selectIsloading } from 'redux/contacts.selector';
 
 export const App = () => {
-  const contacts = useSelector(state => state.contacts);
+  const dispatch = useDispatch();
+  const contacts = useSelector(selectContacts);
+  const isLoading = useSelector(selectIsloading);
+  const error = useSelector(selectError);
+
+
+  useEffect(()=> {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   return (
     <Fragment>
       <h1 className={s.container}>Phonebook</h1>
+      {isLoading && !error && <p>Loading...</p>}
       <ContactForm />
 
       <h2 className={s.container}>Contacts</h2>
