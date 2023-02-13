@@ -6,7 +6,7 @@ import { selectFilter } from 'redux/contacts.selector';
 import { searchFilter } from 'redux/filterSlice';
 
 export const Filter = () => {
-  const filter = useSelector(selectFilter)
+  const filter = useSelector(selectFilter);
   const filterInputId = nanoid();
   const dispatch = useDispatch();
   const handlerFilter = e => {

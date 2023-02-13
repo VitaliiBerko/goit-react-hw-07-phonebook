@@ -49,7 +49,7 @@ export const ContactForm = () => {
     } else {
       setName('');
       setNumber('');
-      dispatch(addContact(contactName, contactNumber));
+      dispatch(addContact({ name: contactName, phone: contactNumber }));
     }
   };
 

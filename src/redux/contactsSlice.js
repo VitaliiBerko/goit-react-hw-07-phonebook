@@ -28,11 +28,11 @@ const contactsSlice = createSlice({
 
       .addCase(addContact.pending, state => {
         state.isLoading = true;
-      } )
-      .addCase(addContact.fulfilled, (state, {payload})=>{
-        state.isLoading= false;
-        state.error =null;
-        state.items.push(payload)
+      })
+      .addCase(addContact.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.error = null;
+        state.items.push(payload);
       })
       .addCase(addContact.rejected, (state, { payload }) => {
         state.isLoading = false;
@@ -42,38 +42,18 @@ const contactsSlice = createSlice({
 
       .addCase(deleteContact.pending, state => {
         state.isLoading = true;
-      } )
-      .addCase(deleteContact.fulfilled, (state, {payload})=>{
-        state.isLoading= false;
+      })
+      .addCase(deleteContact.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
         state.error = null;
-        state.items = state.items.filter(({id})=>id !==payload.id);
+        state.items = state.items.filter(({ id }) => id !== payload.id);
       })
       .addCase(deleteContact.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.error = payload;
         Notiflix.Notify.failure(payload);
-      })
-
-    // addContact: {
-    //   reducer(state, { payload }) {
-    //     state.items.push(payload);
-    //   },
-    //   prepare(name, number) {
-    //     return {
-    //       payload: {
-    //         id: nanoid(),
-    //         name,
-    //         number,
-    //       },
-    //     };
-    //   },
-    // },
-    // deleteContact(state, { payload }) {
-    //   state.contacts = state.items.filter(({ id }) => id !== payload);
-    // },
+      });
   },
 });
-
-// export const { addContact, deleteContact } = contactsSlice.actions;
 
 export const contactsReducer = contactsSlice.reducer;
